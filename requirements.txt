@@ -1,0 +1,6 @@
+openai
+PyGithub
+jsonschema
+selenium
+webdriver-manager
+python-dotenv
