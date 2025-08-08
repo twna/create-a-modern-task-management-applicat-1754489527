@@ -1,0 +1,10 @@
+{
+    "code": "const express = require('express');\nconst winston = require('winston');\n\n// Logger configuration\nconst logConfiguration = {\n    'transports': [\n        new winston.transports.Console(),\n        new winston.transports.File({\n            filename: 'logs/server.log'\n        })\n    ],\n    format: winston.format.combine(\n        winston.format.timestamp({\n           format: 'MMM-DD-YYYY HH:mm:ss'\n        }),\n        winston.format.printf(info => `${info.level}: ${info.timestamp}: ${info.message}`),\n        winston.format.errors({ stack: true }),\n        winston.format.splat(),\n        winston.format.json()\n    )\n};\n\n// Create a logger instance\nconst logger = winston.createLogger(logConfiguration);\n\n// Middleware for logging all requests\nconst requestLogger = (req, res, next) => {\n    logger.info(`${req.method} ${req.url}`);\n    next();\n};\n\n// Error handling middleware\nconst errorHandlingMiddleware = (err, req, res, next) => {\n    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);\n    res.status(err.status || 500).send({ error: { status: err.status || 500, message: err.message || 'Internal Server Error' } });\n};\n\nmodule.exports = {\n    requestLogger,\n    errorHandlingMiddleware,\n    logger\n};",
+    "summary": "Implemented error handling and logging middleware using Express and Winston. The logging middleware logs all incoming requests, while the error handling middleware logs errors and sends a formatted response to the client. The logger is configured to output logs to the console and a file named 'server.log'.",
+    "checklist": [
+        "Create logger configuration with Winston",
+        "Implement request logging middleware",
+        "Implement error handling middleware",
+        "Export the logger and middleware for use in the application"
+    ]
+}
